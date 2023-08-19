@@ -1,11 +1,10 @@
-from typing import Optional
 import OrderStatus
 from pydantic import BaseModel
 
 
 class Order(BaseModel):
     uuid: str
-    status: OrderStatus = OrderStatus.OrderStatus.PENDING
+    status: str = OrderStatus.OrderStatus.PENDING
 
     def execute(self):
         print(f"Executing order, {self.uuid}")
