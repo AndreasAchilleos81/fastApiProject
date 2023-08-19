@@ -1,7 +1,9 @@
+import uvicorn
 from fastapi import FastAPI, WebSocket, HTTPException
 from fastapi.responses import HTMLResponse
 
 from OrderStatus import OrderStatus
+from html import Html
 from order import Order
 from ordersCollection import Orders
 from broadcaster import Broadcaster
@@ -10,44 +12,10 @@ broadcaster: Broadcaster = Broadcaster()
 app = FastAPI()
 orders_collection: Orders = Orders()
 
-html = """
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Chat</title>
-    </head>
-    <body>
-        <h1>WebSocket Chat</h1>
-        <form action="" onsubmit="sendMessage(event)">
-            <input type="text" id="messageText" autocomplete="off"/>
-            <button>Send</button>
-        </form>
-        <ul id='messages'>
-        </ul>
-        <script>
-            var ws = new WebSocket("ws://localhost:8000/ws");
-            ws.onmessage = function(event) {
-                var messages = document.getElementById('messages')
-                var message = document.createElement('li')
-                var content = document.createTextNode(event.data)
-                message.appendChild(content)
-                messages.appendChild(message)
-            };
-            function sendMessage(event) {
-                var input = document.getElementById("messageText")
-                ws.send(input.value)
-                input.value = ''
-                event.preventDefault()
-            }
-        </script>
-    </body>
-</html>
-"""
-
 
 @app.get("/")
 async def get():
-    return HTMLResponse(html)
+    return HTMLResponse(Html.get_subscriber_html())
 
 
 @app.get("/orders", status_code=200)
@@ -95,3 +63,7 @@ async def websocket_endpoint(websocket: WebSocket):
     while True:
         data = await websocket.receive_text()
         await broadcaster.broadcast(data)
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)
