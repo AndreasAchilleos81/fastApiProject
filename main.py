@@ -1,6 +1,8 @@
 import uvicorn
+from HostAndPort import HostAndPort
 from fastapi import FastAPI, WebSocket, HTTPException
 from fastapi.responses import HTMLResponse
+from fastapi.openapi.utils import get_openapi
 
 from OrderStatus import OrderStatus
 from html import Html
@@ -8,14 +10,27 @@ from order import Order
 from ordersCollection import Orders
 from broadcaster import Broadcaster
 
+
 broadcaster: Broadcaster = Broadcaster()
 app = FastAPI()
 orders_collection: Orders = Orders()
+html: Html = Html()
+
+
+def my_schema():
+    overriden_schema = get_openapi(
+        title="Fast API Project",
+        version="1.0",
+        description="Learning Fast API and Python",
+        routes=app.routes,
+    )
+    app.openapi_schema = overriden_schema
+    return app.openapi_schema
 
 
 @app.get("/")
 async def get():
-    return HTMLResponse(Html.get_subscriber_html())
+    return HTMLResponse(html.get_subscriber_html())
 
 
 @app.get("/orders", status_code=200)
@@ -66,4 +81,7 @@ async def websocket_endpoint(websocket: WebSocket):
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run("main:app", host=HostAndPort.HOST, port=HostAndPort.PORT)
+
+
+app.openapi_schema = my_schema()
