@@ -17,7 +17,7 @@ class Html:
             </form>
             <ul id='messages'>
             </ul>
-            <script>""" + "\n" + f"var ws = new WebSocket('{ws_address}');" + """ 
+            <script>""" + "\n\t\t" + f"var ws = new WebSocket('{ws_address}');" + """ 
                 ws.onmessage = function(event) {
                     var messages = document.getElementById('messages')
                     var message = document.createElement('li')
