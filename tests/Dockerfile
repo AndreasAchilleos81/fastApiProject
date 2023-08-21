@@ -1,8 +1,8 @@
 FROM python:3.11-alpine
 
-COPY . /usr/fastApiProjectRobotTests/tests
+COPY . /usr/fastApiProjectRobotTests/
 
-WORKDIR /usr/fastApiProjectRobotTests/tests
+WORKDIR /usr/fastApiProjectRobotTests
 
 RUN pip install robotframework requests robotframework-requests robotframework-jsonlibrary
 
